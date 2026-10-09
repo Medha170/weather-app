@@ -36,6 +36,10 @@ def create_app(test_config=None):
 
     app.jinja_env.filters["weather_symbol"] = weather_symbol
 
+    @app.route("/health", methods=["GET"])
+    def health():
+        return {"status": "healthy"}, 200
+
     Path(app.config["DATABASE"]).parent.mkdir(parents=True, exist_ok=True)
     init_db(app.config["DATABASE"])
 
