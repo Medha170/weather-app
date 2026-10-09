@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#edf5f7">
+  <title>Daybreak — Weather, simply</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <main class="page-shell">
+    <header class="topbar">
+      <a class="brand" href="/" aria-label="Daybreak home">
+        <span class="brand-mark" aria-hidden="true">☀</span>
+        <span>daybreak</span>
+      </a>
+      <span class="live-label"><span class="live-dot"></span> LIVE WEATHER</span>
+    </header>
+
+    <section class="intro">
+      <p class="eyebrow">YOUR LITTLE WEATHER WINDOW</p>
+      <h1>A brighter way<br class="mobile-break"> to plan your day.</h1>
+      <p class="intro-copy">A quick look at the sky, wherever you are.</p>
+      <form class="search-form" action="/" method="post">
+        <span class="search-icon" aria-hidden="true">⌕</span>
+        <label class="visually-hidden" for="city">City name</label>
+        <input id="city" name="city" type="search" placeholder="Search for a city..." value="{{ city }}" autocomplete="off" required>
+        <button type="submit">Find weather <span aria-hidden="true">→</span></button>
+      </form>
+      {% if error %}
+        <p class="error-message" role="alert">{{ error }}</p>
+      {% endif %}
+    </section>
+
+    {% if forecast %}
+    <section class="weather-layout" aria-label="Weather for {{ forecast.city }}">
+      <article class="current-card">
+        <div class="current-heading">
+          <div>
+            <p class="eyebrow light-eyebrow">RIGHT NOW</p>
+            <h2>{{ forecast.city }}</h2>
+            <p class="location">{{ forecast.location }}</p>
+          </div>
+          <span class="sun-art" aria-hidden="true">{% if forecast.current.is_day %}☀{% else %}☾{% endif %}</span>
+        </div>
+        <div class="temperature">
+          <span>{{ forecast.current.temperature|round|int }}</span><sup>{{ forecast.current.temperature_unit }}</sup>
+        </div>
+        <p class="condition">{{ forecast.current.description }}</p>
+        <div class="current-details">
+          <div><span class="detail-icon">↗</span><span>Feels like <strong>{{ forecast.current.feels_like|round|int }}°</strong></span></div>
+          <div><span class="detail-icon">◌</span><span>Humidity <strong>{{ forecast.current.humidity }}%</strong></span></div>
+          <div><span class="detail-icon">⌁</span><span>Wind <strong>{{ forecast.current.wind_speed|round|int }} {{ forecast.current.wind_unit }}</strong></span></div>
+        </div>
+      </article>
+
+      <article class="forecast-card">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">LOOKING AHEAD</p>
+            <h2>5-day forecast</h2>
+          </div>
+          <span class="forecast-badge">NEXT 5 DAYS</span>
+        </div>
+        <div class="forecast-list">
+          {% for day in forecast.days %}
+          <div class="forecast-row">
+            <div class="forecast-date">
+              <strong>{% if loop.first %}Today{% else %}{{ day.date|date_label }}{% endif %}</strong>
+              <span>{{ day.description }}</span>
+            </div>
+            <span class="forecast-symbol" aria-hidden="true">{{ day.date|weather_symbol(day.description) }}</span>
+            <span class="precipitation">☂ {{ day.precipitation }}%</span>
+            <div class="high-low"><strong>{{ day.high|round|int }}°</strong><span>{{ day.low|round|int }}°</span></div>
+          </div>
+          {% endfor %}
+        </div>
+      </article>
+    </section>
+    {% endif %}
+
+    {% if recent_searches %}
+    <section class="recent-section">
+      <div class="section-heading recent-heading">
+        <div>
+          <p class="eyebrow">PICK UP WHERE YOU LEFT OFF</p>
+          <h2>Recent searches</h2>
+        </div>
+      </div>
+      <div class="recent-list">
+        {% for search in recent_searches %}
+        <form action="/" method="post">
+          <input type="hidden" name="city" value="{{ search.city }}">
+          <button class="recent-item" type="submit">
+            <span class="recent-pin" aria-hidden="true">⌖</span>
+            <span class="recent-place"><strong>{{ search.city }}</strong><small>{{ search.location }}</small></span>
+            <span class="recent-arrow" aria-hidden="true">↗</span>
+          </button>
+        </form>
+        {% endfor %}
+      </div>
+    </section>
+    {% endif %}
+
+    <footer>
+      <span>Made for the moments between plans.</span>
+      <span>Weather data by <a href="https://open-meteo.com/" target="_blank" rel="noopener noreferrer">Open-Meteo</a></span>
+    </footer>
+  </main>
+</body>
+</html>
