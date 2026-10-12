@@ -12,6 +12,6 @@ COPY . .
 
 RUN mkdir -p /app/instance
 
-EXPOSE 5000
+EXPOSE 5001
 
-CMD ["gunicorn", "--bind", "0.0.0.0:5000", "--access-logfile", "-", "app:app"]
+CMD ["gunicorn", "--bind", "0.0.0.0:5001", "--access-logfile", "-", "app:app"]
