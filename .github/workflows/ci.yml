@@ -40,7 +40,7 @@ jobs:
     needs: test
 
     permissions:
-      contents: read
+      contents: write
       packages: write
 
     steps:
@@ -87,7 +87,7 @@ jobs:
           git add k8s/deployment.yaml
 
           if ! git diff --cached --quiet; then
-            git commit -m "Update deployment image to sha-${SHORT_SHA}"
+            git commit -m "Update deployment image to sha-${SHORT_SHA} [skip ci]"
             git push
           else
             echo "Deployment image is already up to date."
