@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: weather-app
-          image: ghcr.io/medha170/weather-app:sha-f776199
+          image: ghcr.io/medha170/weather-app:sha-69926ee
           resources:
             requests:
               memory: 128Mi
