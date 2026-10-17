@@ -74,7 +74,7 @@ jobs:
       - name: Update Kubernetes deployment image
         if: github.event_name == 'push'
         env:
-          IMAGE_NAME: ghcr.io/Medha170/weather-app
+          IMAGE_NAME: ghcr.io/medha170/weather-app
         run: |
           SHORT_SHA="${GITHUB_SHA::7}"
           export NEW_IMAGE="${IMAGE_NAME}:sha-${SHORT_SHA}"
