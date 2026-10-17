@@ -79,7 +79,7 @@ jobs:
           SHORT_SHA="${GITHUB_SHA::7}"
           export NEW_IMAGE="${IMAGE_NAME}:sha-${SHORT_SHA}"
 
-          python -c "from pathlib import Path; import os; p = Path('k8s/deployment.yaml'); lines = p.read_text().splitlines(keepends=True); matches = [i for i, line in enumerate(lines) if 'image: ghcr.io/Medha170/weather-app:' in line]; assert len(matches) == 1, f'Expected exactly one image line, found {len(matches)}'; i = matches[0]; prefix = lines[i].split('image:')[0]; lines[i] = prefix + 'image: ' + os.environ['NEW_IMAGE'] + '\n'; p.write_text(''.join(lines))"
+          python -c "from pathlib import Path; import os; p = Path('k8s/deployment.yaml'); lines = p.read_text().splitlines(keepends=True); image_prefix = 'image: ' + os.environ['IMAGE_NAME'] + ':'; matches = [i for i, line in enumerate(lines) if image_prefix in line]; assert len(matches) == 1, f'Expected exactly one image line, found {len(matches)}'; i = matches[0]; prefix = lines[i].split('image:')[0]; lines[i] = prefix + 'image: ' + os.environ['NEW_IMAGE'] + '\n'; p.write_text(''.join(lines))"
 
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
