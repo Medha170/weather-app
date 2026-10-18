@@ -7,9 +7,12 @@ from flask import Flask, render_template, request
 from database import add_search, get_recent_searches, init_db
 from weather import CityNotFoundError, WeatherServiceError, get_weather
 
+from prometheus_flask_exporter import PrometheusMetrics
+
 
 def create_app(test_config=None):
     app = Flask(__name__)
+    PrometheusMetrics(app)
     app.config.from_mapping(
         DATABASE=os.environ.get(
             "WEATHER_DATABASE", str(Path(app.instance_path) / "weather.sqlite3")
@@ -35,6 +38,10 @@ def create_app(test_config=None):
         return "☀"
 
     app.jinja_env.filters["weather_symbol"] = weather_symbol
+
+    @app.route("/health", methods=["GET"])
+    def health():
+        return {"status": "healthy"}, 200
 
     Path(app.config["DATABASE"]).parent.mkdir(parents=True, exist_ok=True)
     init_db(app.config["DATABASE"])
@@ -81,4 +88,4 @@ app = create_app()
 
 
 if __name__ == "__main__":
-    app.run(debug=os.environ.get("FLASK_DEBUG") == "1")
+    app.run(port=5001, debug=os.environ.get("FLASK_DEBUG") == "1")
